@@ -24,7 +24,10 @@ def edit_post(request):
         post.content = request.POST.get('content')
         post.save()
         return redirect('/post/read/?post_id=%s' % post.id)
-    return render(request, 'edit_post.html', {})
+    else:
+        post_id = request.GET.get('post_id')
+        post = Post.objects.get(id=post_id)
+        return render(request, 'edit_post.html', {'post': post})
 
 
 def read_post(request):
@@ -34,4 +37,11 @@ def read_post(request):
 
 
 def search_post(request):
-    return render(request, 'search_post.html', {})
+    keyword = request.POST.get('keyword')
+
+    postcc = Post.objects.filter(content__contains=keyword)
+
+    return render(request, 'search_post.html', {'postcc': postcc})
+# test post
+
+# test post
