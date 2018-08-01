@@ -1,10 +1,24 @@
+from math import ceil
 from django.shortcuts import render,redirect
 from post.models import Post
 # Create your views here.
 
 
 def post_list(request):
-    return render(request, 'post_list.html', {})
+    page = int(request.GET.get('page', 1))  # 当前页码
+    print(page)
+    total = Post.objects.count()       # 帖子总数1
+    per_page = 10                      # 每页帖子数1
+    pages = ceil(total/per_page)       # 总页数1
+
+    start = (page - 1) * per_page
+
+    end = start + per_page
+
+    # = SELECT * FROM post where offset start limit 10
+    posts = Post.objects.all().order_by('-id')[start:end]  # 惰性加载 懒加载1
+    return render(request, 'post_list.html',
+                  {'posts': posts, 'pages': range(pages)})
 
 
 def create_post(request):
