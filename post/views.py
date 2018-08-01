@@ -7,9 +7,9 @@ from post.models import Post
 def post_list(request):
     page = int(request.GET.get('page', 1))  # 当前页码
     print(page)
-    total = Post.objects.count()       # 帖子总数1
-    per_page = 10                      # 每页帖子数1
-    pages = ceil(total/per_page)       # 总页数1
+    total = Post.objects.count()       # 帖子总数123
+    per_page = 10                      # 每页帖子数123
+    pages = ceil(total/per_page)       # 总页数123
 
     start = (page - 1) * per_page
 
