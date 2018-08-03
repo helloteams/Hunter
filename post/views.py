@@ -1,5 +1,5 @@
 from math import ceil
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from post.models import Post
 # Create your views here.
 

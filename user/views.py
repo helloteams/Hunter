@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from django.shortcuts import render, redirect
 # Create your views here.
@@ -6,6 +7,9 @@ from user.forms import RegisterForm
 
 
 def register(request):
+    # name = settings.SESSION_COOKIE_NAME
+    # session_key = request.COOKIES.get(name)
+
     if request.method == "POST":
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
@@ -26,7 +30,6 @@ def login(request):
     if request.method == "POST":
         nickname = request.POST.get("nickname")
         password = request.POST.get("password")
-
         try:
             user = User.objects.get(nickname=nickname)
         except User.DoesNotExist:
