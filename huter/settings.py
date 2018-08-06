@@ -69,6 +69,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'huter.wsgi.application'
 
+# Cache
+# CACHES = {
+#     'default':  {
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+#     }
+# }
+
+# 使用ｒｅｄｉｓ做缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PICKLE_VERSION": -1,
+        }
+    }
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -120,3 +140,21 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = 'medias'
 MEDIA_URL = '/medias/'
+
+# #  Weibo.OAuth
+# WB_APP_KEY = ''
+# WB_APP_SECRET = ''
+# WB_CALLBACK = ''
+#
+# # 第一步 授权接口
+#
+# WB_AUTH_API = 'http'
+# WB_AUTH_ARGS = {
+#     'client_id': WB_APP_KEY,
+#     'redirect_uri': WB_CALLBACK,
+#     'display': 'default',
+# }
+#
+# WB_AUTH_URL = '%s%s' % (WB_AUTH_API, urlencode(WB_AUTH_ARGS))
+#
+# # http:

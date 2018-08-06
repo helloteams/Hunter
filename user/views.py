@@ -7,8 +7,9 @@ from user.forms import RegisterForm
 
 
 def register(request):
-    # name = settings.SESSION_COOKIE_NAME
+    # name = settings.SESSION_COOKIE_NAME  # sessionid
     # session_key = request.COOKIES.get(name)
+    # # session_key = request.COOKIES.get("sessionid")
 
     if request.method == "POST":
         form = RegisterForm(request.POST, request.FILES)
@@ -52,3 +53,8 @@ def user_info(request):
     uid = request.session.get('uid')
     user = User.objects.get(id=uid)
     return render(request, 'user_info.html', {'user': user})
+
+
+def wb_callback(request):
+    code = request.GET.get('code')
+    return None
