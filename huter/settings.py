@@ -44,6 +44,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    # 'common.middleware.simple_middleware',
+    'common.middleware.BlockMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -88,6 +90,8 @@ CACHES = {
     }
 }
 
+# Session 存储引擎
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -97,6 +101,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+#  Redis
+REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 1,
+
 }
 
 # Password validation

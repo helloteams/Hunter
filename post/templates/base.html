@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <title>World Tree</title>
 
     <!-- 图标 -->
@@ -14,9 +15,9 @@
     <style type="text/css">
         .site-icon { padding: 5px 10px 0 10px; }
     </style>
-    {% block ext_css %}
+    {% block ext_css %}    {% endblock %}
 
-    {% endblock %}
+
 
 </head>
 <body>
@@ -36,7 +37,7 @@
                     <li><a  href="/user/info/">Hello, {{request.session.nickname}}</a></li>
                     <li>
                         <a class="navbar-brand" href="/user/info/">
-                            <img src="{{request.session.avatar_url}}" height="25px" width="25px">
+                            <img src="{{user.icon.url}}" height="25px" width="25px">
                         </a>
                     </li>
                     <li><a href="/user/logout/">退出</a></li>
@@ -57,12 +58,12 @@
                     <input type="text" class="form-control" placeholder="搜索" name="keyword">
                 </form>
 
-                <!-- <hr>
+                <hr>
                 <h4>热门文章</h4>
                 <iframe src ="/post/top10/" frameborder="0" id="iFrame1" name="iFrame1"
                         onload="this.height=iFrame1.document.body.scrollHeight">
                     <p>Your browser does not support iframes.</p>
-                </iframe> -->
+                </iframe>
             </div>
         </div>
     </div>
