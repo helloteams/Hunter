@@ -33,11 +33,12 @@ def simple_middleware(view_func):
 
 class BlockMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        user_ok = request.META
-        print('---------------------------------')
-        print(user_ok)
-        print('---------------------------------')
-        # 取出用户 Ip,病并 设置相关的key
+        # user_ok = request.META
+        # print('---------------------------------')
+        # print(user_ok)
+        # print('---------------------------------')
+
+        # 取出用户 Ip,并设置相关的key
         user_ip = request.META['REMOTE_ADDR']
         reqeust_key = 'RequestTime-%s' % user_ip
         block_key = 'Blocker-%s' % user_ip
@@ -53,7 +54,7 @@ class BlockMiddleware(MiddlewareMixin):
 
         if (now - t0) < 1:
             # 封禁ip
-            cache.set(block_key, 1, 30)
+            cache.set(block_key, 1, 15)
             return render(request, 'blockers.html')
         else:
             # 更新访问时间

@@ -1,7 +1,7 @@
-from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from django.shortcuts import render, redirect
 # Create your views here.
+from user.helper import login_required
 from user.models import User
 from user.forms import RegisterForm
 
@@ -48,9 +48,9 @@ def logout(request):
     request.session.flush()
     return redirect('/user/login/')
 
-
+@login_required
 def user_info(request):
-    uid = request.session.get('uid')
+    uid = request.session['uid']
     user = User.objects.get(id=uid)
     return render(request, 'user_info.html', {'user': user})
 

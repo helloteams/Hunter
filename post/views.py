@@ -1,12 +1,17 @@
 from math import ceil
 from django.core.cache import cache
 from django.shortcuts import render, redirect
-from post.models import Post
+
+from common import rds
+from post.models import Post, Tag
+from post.models import Comment
 from post.helper import page_cache, get_top_n
 from post.helper import read_count
-
-
+from user.helper import login_required
+from user.helper import check_perm
 # Create your views here.
+from user.models import User
+
 
 @page_cache(53)
 def post_list(request):
@@ -22,20 +27,25 @@ def post_list(request):
 
     # = SELECT * FROM post where offset start limit 10
     posts = Post.objects.all().order_by('-id')[start:end]  # 惰性加载 懒加载1
+
+    user = User.objects.get(id=888)
     return render(request, 'post_list.html',
-                  {'posts': posts, 'pages': range(pages)})
+                  {'posts': posts, 'pages': range(pages)}, {'user': user})
 
 
+@login_required
+@check_perm('user')
 def create_post(request):
     if request.method == 'POST':
-        # uid = request.session.get('uid')
+        uid = request.session.get('uid')
         title = request.POST.get('title')
         content = request.POST.get('content')
-        post = Post.objects.create(title=title, content=content)
+        post = Post.objects.create(uid=uid, title=title, content=content)
         return redirect('/post/read/?post_id=%s' % post.id)
     return render(request, 'create_post.html', {})
 
 
+@login_required
 def edit_post(request):
     if request.method == "POST":
         post_id = int(request.POST.get('post_id'))
@@ -44,13 +54,21 @@ def edit_post(request):
         post.content = request.POST.get('content')
         post.save()
 
-        key = 'Post-%s' % post_id
-        cache.set(key, post)  # 修改后的数据存入缓存 更新缓存
+        str_tags = request.POST.get('tags')
+        tag_names = [s.strip()
+                     for s in str_tags.title().replace(',', ',').split(',')
+                     if s.strip()]
+
+        post.update_tags(tag_names)
+
+        # key = 'Post-%s' % post_id
+        # cache.set(key, post)  # 修改后的数据存入缓存 更新缓存
         return redirect('/post/read/?post_id=%s' % post.id)
     else:
         post_id = request.GET.get('post_id')
         post = Post.objects.get(id=post_id)
-        return render(request, 'edit_post.html', {'post': post})
+        str_tags = ','.join(t.name for t in post.tags())
+        return render(request, 'edit_post.html', {'post': post,'tags': str_tags})
 
 
 @read_count
@@ -59,6 +77,16 @@ def read_post(request):
     post_id = int(request.GET.get('post_id'))
     post = Post.objects.get(id=post_id)
     return render(request, 'read_post.html', {'post': post})
+
+
+@login_required
+@check_perm('manager')
+def del_post(request):
+    post_id = int(request.GET.get('post_id'))
+    Post.objects.get(id=post_id).delete()  # 删除数据库的内容
+    rds.zrem(b'ReadRank', post_id)  # 同时删除redis上的排行缓存数据
+
+    return redirect('/')
 
 
 # @page_cache(5)
@@ -89,3 +117,18 @@ def search_post(request):
 def top10(request):
     rank_data = get_top_n(10)
     return render(request, 'top10.html', {'rank_data': rank_data})
+
+
+@login_required
+def comment(request):
+    uid = request.session['uid']
+    post_id = request.POST.get('post_id')
+    content = request.POST.get('content')
+    Comment.objects.create(uid=uid, post_id = post_id, content=content)
+    return redirect('/post/read/?post_id=%s' % post_id)
+
+
+def tag_filter(request):
+    tag_id = int(request.GET.get('tag_id'))
+    tag = Tag.objects.get(id=tag_id)
+    return render(request, 'tag_filter.html', {'posts': tag.posts()})
