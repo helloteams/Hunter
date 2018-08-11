@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^post/comment/', post_views.comment),
     url(r'^post/tag/', post_views.tag_filter),
     url(r'^post/delete/', post_views.del_post),
+    url(r'^post/del_delete/', post_views.del_comment),
 
     url(r'^user/register', user_views.register),
     url(r'^user/login', user_views.login),

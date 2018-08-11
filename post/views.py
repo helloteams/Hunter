@@ -13,7 +13,7 @@ from user.helper import check_perm
 from user.models import User
 
 
-@page_cache(53)
+@page_cache(5)
 def post_list(request):
     page = int(request.GET.get('page', 1))  # 当前页码
     print(page)
@@ -34,7 +34,7 @@ def post_list(request):
 
 
 @login_required
-@check_perm('user')
+@check_perm('add_post')
 def create_post(request):
     if request.method == 'POST':
         uid = request.session.get('uid')
@@ -80,7 +80,7 @@ def read_post(request):
 
 
 @login_required
-@check_perm('manager')
+@check_perm('del_post')
 def del_post(request):
     post_id = int(request.GET.get('post_id'))
     Post.objects.get(id=post_id).delete()  # 删除数据库的内容
@@ -120,11 +120,21 @@ def top10(request):
 
 
 @login_required
+@check_perm('add_comment')
 def comment(request):
     uid = request.session['uid']
     post_id = request.POST.get('post_id')
     content = request.POST.get('content')
     Comment.objects.create(uid=uid, post_id = post_id, content=content)
+    return redirect('/post/read/?post_id=%s' % post_id)
+
+
+@login_required
+@check_perm('del_comment')
+def del_comment(request):
+    post_id = request.POST.get('post_id')
+    comment_id = request.POST.get('comment_id')
+    Comment.objects.get(id=comment_id).delete()
     return redirect('/post/read/?post_id=%s' % post_id)
 
 

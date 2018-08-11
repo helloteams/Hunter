@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from user.models import User
 
+
 def login_required(view_func):
     def wrapper(request):
         uid = request.session.get('uid')
