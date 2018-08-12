@@ -52,9 +52,9 @@ class BlockMiddleware(MiddlewareMixin):
         request_log = cache.get(reqeust_key, [0, 0, 0])
         t0, t1, t2 = request_log
 
-        if (now - t0) < 1:
+        if (now - t0) < 0.5:
             # 封禁ip
-            cache.set(block_key, 1, 15)
+            cache.set(block_key, 1, 2)
             return render(request, 'blockers.html')
         else:
             # 更新访问时间

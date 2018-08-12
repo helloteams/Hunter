@@ -48,6 +48,7 @@ def logout(request):
     request.session.flush()
     return redirect('/user/login/')
 
+
 @login_required
 def user_info(request):
     uid = request.session['uid']

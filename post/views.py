@@ -13,7 +13,7 @@ from user.helper import check_perm
 from user.models import User
 
 
-@page_cache(5)
+@page_cache(1)
 def post_list(request):
     page = int(request.GET.get('page', 1))  # 当前页码
     print(page)
@@ -72,7 +72,7 @@ def edit_post(request):
 
 
 @read_count
-@page_cache(5)
+@page_cache(1)
 def read_post(request):
     post_id = int(request.GET.get('post_id'))
     post = Post.objects.get(id=post_id)
